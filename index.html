@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matthew Cromer — Mechanical Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #FAF9F5;
+    --paper-line: #E1E5E8;
+    --ink: #1C232B;
+    --steel: #4A5C6A;
+    --muted: #838E99;
+    --redline: #C1440E;
+    --card: #FFFFFF;
+    --border: #D8DCDE;
+    --sheet-w: min(1180px, 92vw);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation: none !important; transition: none !important; }
+  }
+
+  body {
+    margin: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 31px, var(--paper-line) 31px, var(--paper-line) 32px),
+      repeating-linear-gradient(90deg, transparent, transparent 31px, var(--paper-line) 31px, var(--paper-line) 32px),
+      var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .display {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.01em;
+  }
+
+  a { color: inherit; }
+
+  /* ---------- Corner registration marks ---------- */
+  .crop {
+    position: fixed;
+    width: 22px;
+    height: 22px;
+    border-color: var(--ink);
+    opacity: 0.35;
+    z-index: 60;
+    pointer-events: none;
+  }
+  .crop--tl { top: 14px; left: 14px; border-top: 1.5px solid; border-left: 1.5px solid; }
+  .crop--tr { top: 14px; right: 14px; border-top: 1.5px solid; border-right: 1.5px solid; }
+  .crop--bl { bottom: 14px; left: 14px; border-bottom: 1.5px solid; border-left: 1.5px solid; }
+  .crop--br { bottom: 14px; right: 14px; border-bottom: 1.5px solid; border-right: 1.5px solid; }
+  @media (max-width: 700px){ .crop { display:none; } }
+
+  /* ---------- Title bar (acts as the drawing's title block) ---------- */
+  .titlebar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    background: rgba(250, 249, 245, 0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1.5px solid var(--ink);
+  }
+  .titlebar-inner {
+    width: var(--sheet-w);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    gap: 16px;
+  }
+  .titlebar-name {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .titlebar-nav {
+    display: flex;
+    gap: 26px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .titlebar-nav a {
+    text-decoration: none;
+    color: var(--steel);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .titlebar-nav a:hover { color: var(--redline); border-color: var(--redline); }
+  .titlebar-sheet {
+    font-size: 12px;
+    white-space: nowrap;
+    color: var(--steel);
+  }
+  @media (max-width: 720px){
+    .titlebar-nav { display: none; }
+  }
+
+  main { padding-top: 64px; }
+
+  section { position: relative; }
+
+  .sheet {
+    width: var(--sheet-w);
+    margin: 0 auto;
+    padding: 56px 54px;
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,247,240,0.94));
+    box-shadow: 0 24px 70px rgba(28, 35, 43, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .sheet::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(193, 68, 14, 0.06), transparent 54%);
+    pointer-events: none;
+  }
+  section:last-of-type .sheet { border-bottom: none; }
+
+  .sheet-tag {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--redline);
+    font-weight: 600;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .sheet-tag::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero .sheet { padding-top: 120px; }
+  .hero-title {
+    font-size: clamp(42px, 8vw, 84px);
+    line-height: 0.98;
+    font-weight: 700;
+  }
+  .hero-subtitle {
+    margin-top: 14px;
+    font-family: 'Inter', sans-serif;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: clamp(16px, 2.4vw, 20px);
+    color: var(--steel);
+    font-weight: 500;
+    max-width: 640px;
+  }
+  .hero-copy {
+    margin-top: 22px;
+    max-width: 560px;
+    color: var(--ink);
+    font-size: 16px;
+  }
+  .hero-cta {
+    margin-top: 34px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    text-decoration: none;
+    border: 1.5px solid var(--ink);
+    border-radius: 2px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn--solid { background: var(--ink); color: var(--paper); }
+  .btn--solid:hover { background: var(--redline); border-color: var(--redline); }
+  .btn--ghost:hover { background: var(--ink); color: var(--paper); }
+
+  /* ---------- Dimension row (signature element) ---------- */
+  .dim-row {
+    margin-top: 56px;
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .dim-seg {
+    flex: 1 1 180px;
+    min-width: 160px;
+    padding: 0 22px 0 0;
+    margin-right: 22px;
+    border-right: 1px dashed var(--border);
+  }
+  .dim-seg:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .dim-tick {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--redline);
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+  .dim-tick svg { flex-shrink: 0; }
+  .dim-value {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+  }
+  .dim-label {
+    display: block;
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ---------- Section headers ---------- */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 34px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .section-title { font-size: clamp(26px, 4vw, 36px); font-weight: 600; }
+  .section-note { font-size: 12.5px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 32px;
+    position: relative;
+    z-index: 1;
+  }
+  .meta-card {
+    background: rgba(255,255,255,0.75);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px 18px;
+    box-shadow: 0 10px 28px rgba(28, 35, 43, 0.05);
+  }
+  .meta-label {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .meta-card strong {
+    font-size: 1rem;
+    display: block;
+    color: var(--ink);
+  }
+
+  .about-stack {
+    display: grid;
+    gap: 18px;
+    position: relative;
+    z-index: 1;
+  }
+  .about-intro {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--redline);
+    border-radius: 22px;
+    padding: 26px 28px;
+    box-shadow: 0 16px 40px rgba(28, 35, 43, 0.05);
+  }
+  .about-intro p { margin-bottom: 12px; color: var(--ink); }
+  .about-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .about-pills span {
+    display: inline-flex;
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: rgba(193, 68, 14, 0.08);
+    color: var(--redline);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  /* ---------- Education ---------- */
+  .edu-card {
+    width: 100%;
+    background: linear-gradient(180deg, rgba(193, 68, 14, 0.05), rgba(74, 92, 106, 0.04));
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--redline);
+    padding: 22px 24px;
+    border-radius: 22px;
+  }
+  .edu-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .edu-school { font-size: 20px; font-weight: 600; font-family: 'Oswald', sans-serif; text-transform: uppercase; }
+  .edu-date { font-size: 12.5px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+  .edu-degree { margin-top: 6px; color: var(--steel); font-weight: 500; }
+  .edu-list { margin: 16px 0 0; padding-left: 20px; color: var(--ink); font-size: 14.5px; }
+  .edu-list li { margin-bottom: 6px; }
+  .edu-gpa-row {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--border);
+    flex-wrap: wrap;
+  }
+  .edu-gpa-item { font-size: 13px; }
+  .edu-gpa-item b { display: block; font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 600; }
+
+  /* ---------- Experience timeline ---------- */
+  .timeline { position: relative; padding-left: 34px; }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 6px; top: 6px; bottom: 6px;
+    width: 1.5px;
+    background: var(--border);
+  }
+  .job { position: relative; margin-bottom: 52px; }
+  .job:last-child { margin-bottom: 0; }
+  .job::before {
+    content: "";
+    position: absolute;
+    left: -34px; top: 4px;
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2.5px solid var(--redline);
+  }
+  .job-head {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    align-items: baseline;
+  }
+  .job-role { font-size: 19px; font-weight: 600; font-family: 'Oswald', sans-serif; text-transform: uppercase; }
+  .job-org { color: var(--redline); font-weight: 500; font-size: 14.5px; }
+  .job-date { font-size: 12.5px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; white-space: nowrap; }
+  .job-list { margin: 14px 0 0; padding-left: 20px; font-size: 14.5px; }
+  .job-list li { margin-bottom: 8px; }
+
+  /* ---------- Projects ---------- */
+  .proj-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 22px;
+  }
+  .proj-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 28px rgba(28, 35, 43, 0.04);
+  }
+  .proj-card:hover { border-color: var(--redline); transform: translateY(-3px); box-shadow: 0 18px 40px rgba(28, 35, 43, 0.1); }
+  .proj-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    gap: 10px;
+  }
+  .proj-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--steel);
+  }
+  .proj-status::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--redline);
+    box-shadow: 0 0 0 2px rgba(193, 68, 14, 0.12);
+  }
+  .proj-status.in-progress {
+    color: var(--redline);
+    border-color: rgba(193, 68, 14, 0.28);
+  }
+  .proj-status.in-progress::before {
+    background: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.16);
+  }
+  .proj-body { padding: 20px 18px 24px; flex: 1; display: flex; flex-direction: column; }
+  .proj-title { font-size: 18px; font-weight: 600; font-family: 'Oswald', sans-serif; text-transform: uppercase; margin-bottom: 12px; }
+  .proj-list { margin: 0; padding-left: 18px; font-size: 13.8px; flex: 1; }
+  .proj-list li { margin-bottom: 8px; }
+  .proj-link {
+    margin-top: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    text-decoration: none;
+    color: var(--redline);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .proj-link:hover { text-decoration: underline; }
+
+  /* ---------- Skills ---------- */
+  .skill-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 22px 24px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 28px rgba(28, 35, 43, 0.04);
+  }
+  .skill-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--redline);
+    box-shadow: 0 18px 40px rgba(28, 35, 43, 0.1);
+  }
+  .skill-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: rgba(193, 68, 14, 0.08);
+    color: var(--redline);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .skill-card h3 { margin-bottom: 8px; font-size: 18px; }
+  .skill-card p { color: var(--steel); margin-bottom: 12px; }
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .skill-tags span {
+    display: inline-flex;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(74, 92, 106, 0.08);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ---------- Contact / footer title block ---------- */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 40px;
+  }
+  @media (max-width: 720px){ .contact-grid { grid-template-columns: 1fr; } }
+  .contact-lead { font-size: clamp(24px, 3.6vw, 32px); font-weight: 600; max-width: 480px; }
+  .contact-copy { margin-top: 16px; color: var(--steel); max-width: 460px; }
+  .contact-block {
+    border: 1px solid var(--border);
+    background: var(--card);
+    padding: 26px 28px;
+  }
+  .contact-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 14px;
+  }
+  .contact-row:last-child { border-bottom: none; }
+  .contact-row span:first-child { color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+  .contact-row a { text-decoration: none; font-weight: 500; }
+  .contact-row a:hover { color: var(--redline); }
+
+  footer {
+    width: var(--sheet-w);
+    margin: 0 auto;
+    padding: 26px 0 60px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="crop crop--tl"></div>
+  <div class="crop crop--tr"></div>
+  <div class="crop crop--bl"></div>
+  <div class="crop crop--br"></div>
+
+  <div class="titlebar">
+    <div class="titlebar-inner">
+      <div class="titlebar-name mono">MATTHEW&nbsp;CROMER — MECH.&nbsp;ENGINEER</div>
+      <nav class="titlebar-nav">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="titlebar-sheet mono" id="sheet-indicator">SHEET 01 / 05</div>
+    </div>
+  </div>
+
+  <main>
+
+    <section id="hero" class="hero" data-sheet="01 / 05">
+      <div class="sheet">
+        <div class="sheet-tag mono">DWG NO. MC—2027 · REV A</div>
+        <h1 class="hero-title reveal">Matthew<br>Cromer</h1>
+        <p class="hero-subtitle reveal">Mechanical Engineering Student — Robotics, Design &amp; Manufacturing</p>
+        <p class="hero-copy reveal">I build systems that have to work outside of a simulation, from CAD models and FEA validation to 3D-printed prototypes, production tooling, and autonomous hardware. I am currently studying at the University of Connecticut, pursuing a double concentration in Dynamic Systems &amp; Control and Design &amp; Manufacturing.</p>
+        <div class="hero-cta reveal">
+          <a class="btn btn--solid" href="mailto:matthewcromer18@gmail.com">Email Me</a>
+          <a class="btn btn--ghost" href="#projects">View Projects ↓</a>
+        </div>
+
+        <div class="hero-meta reveal">
+          <div class="meta-card">
+            <span class="meta-label">Current focus</span>
+            <strong>Robotics + prototyping</strong>
+          </div>
+          <div class="meta-card">
+            <span class="meta-label">Design strength</span>
+            <strong>CAD, testing and iteration</strong>
+          </div>
+          <div class="meta-card">
+            <span class="meta-label">Goal</span>
+            <strong>Build practical hardware</strong>
+          </div>
+        </div>
+    </section>
+
+    <section id="about" data-sheet="02 / 05">
+      <div class="sheet">
+        <div class="sheet-tag mono">SHEET 02 — ABOUT</div>
+        <div class="section-head">
+          <h2 class="section-title">About me</h2>
+          <span class="section-note">STUDENT • BUILDER • DESIGNER</span>
+        </div>
+
+        <div class="about-stack">
+          <div class="about-intro reveal">
+            <p>One unique aspect of my journey is that I was a pre-med student my freshman year. I enjoyed it, but after some reflection, I realized my enjoyment came from solving problems. Since I made the switch to Mechanical Engineering, I haven't looked back.</p>
+            <p>Outside of engineering, my interests are in just about anything that gets me moving, anything from hiking to scuba diving. I have also played basketball my whole life, which helps me stay connected with friends.</p>
+            <p>My overall goal in becoming an engineer is to solve problems that can help make the world a better place. From a young age, I have had a strong moral conviction to try and help people as much as I can, and I hope to continue that in my professional career.</p>
+            <div class="about-pills">
+              <span>Robotics</span>
+              <span>Manufacturing</span>
+              <span>Product design</span>
+              <span>Testing</span>
+            </div>
+          </div>
+
+          <div class="edu-card reveal">
+            <div class="edu-top">
+              <span class="edu-school">University of Connecticut</span>
+              <span class="edu-date mono">AUG 2023 — MAY 2027</span>
+            </div>
+            <div class="edu-degree">B.S. in Mechanical Engineering</div>
+            <ul class="edu-list">
+              <li>Pursuing a double concentration in Dynamic Systems & Control (Robotics) as well as Design & Manufacturing</li>
+              <li>Dean's List — Spring 2026</li>
+            </ul>
+            <div class="edu-gpa-row">
+              <div class="edu-gpa-item mono"><b>3.6 / 4.0</b>CUMULATIVE GPA</div>
+              <div class="edu-gpa-item mono"><b>3.9 / 4.0</b>SPRING 2026 GPA</div>
+              <div class="edu-gpa-item mono"><b>2027</b>EXPECTED GRAD.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience" data-sheet="03 / 05">
+      <div class="sheet">
+        <div class="sheet-tag mono">SHEET 03 — EXPERIENCE</div>
+        <div class="section-head">
+          <h2 class="section-title">Experience</h2>
+          <span class="section-note">2022 — PRESENT</span>
+        </div>
+
+        <div class="timeline">
+
+          <div class="job">
+            <div class="job-head">
+              <div>
+                <span class="job-role">Mechanical Engineering Intern</span><br>
+                <span class="job-org">Marmon Utility — Amherst, NH</span>
+              </div>
+              <span class="job-date">MAY 2026 — AUG 2026</span>
+            </div>
+            <ul class="job-list">
+              <li>Collaborated with the molded products team on the design, testing, and technical reporting of powerline insulator components, conducting tensile, compressive, cantilevered, and wet/dry electrical flashover testing, plus material examination with a Lumafield X-Ray machine.</li>
+              <li>Designed multiple mechanical clamping boot prototypes with 3D printing, one of which increased withstood tension by 1,300% over the previous design while maintaining electrical integrity.</li>
+              <li>Worked with an automation engineer to gain hands-on exposure to automated material handling equipment, packaging technologies, injection molding, 6-axis robotic arms, and high-speed manufacturing systems.</li>
+            </ul>
+          </div>
+
+          <div class="job">
+            <div class="job-head">
+              <div>
+                <span class="job-role">Landscape Laborer</span><br>
+                <span class="job-org">O'Neill Landscaping — Eliot, ME</span>
+              </div>
+              <span class="job-date">MAY 2024 — AUG 2025</span>
+            </div>
+            <ul class="job-list">
+              <li>Promoted from entry-level laborer to independently operating a company vehicle after my first summer, reflecting demonstrated reliability, judgment, and technical competence.</li>
+            </ul>
+          </div>
+
+          <div class="job">
+            <div class="job-head">
+              <div>
+                <span class="job-role">Crew Member</span><br>
+                <span class="job-org">Chipotle — Stratham, NH</span>
+              </div>
+              <span class="job-date">FEB 2022 — DEC 2023</span>
+            </div>
+            <ul class="job-list">
+              <li>Completed management-track training covering front and back of house operations, inventory, and team leadership responsibilities.</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" data-sheet="04 / 05">
+      <div class="sheet">
+        <div class="sheet-tag mono">SHEET 04 — PROJECTS</div>
+        <div class="section-head">
+          <h2 class="section-title">Projects</h2>
+          <span class="section-note">INDEPENDENT WORK</span>
+        </div>
+
+        <div class="proj-grid">
+          <div class="proj-card reveal">
+            <div class="proj-head"><span>July 2026 - Present</span><span class="proj-status in-progress">In progress</span></div>
+            <div class="proj-body">
+              <div class="proj-title">Robotic Arm</div>
+              <ul class="proj-list">
+                <li>Designing a 3–6 degree-of-freedom arm around real-world use cases rather than just a prototype concept.</li>
+                <li>Planning for a Raspberry Pi or Arduino-based microcontroller and 3D-printed PLA frame.I am planning for the end-effector to be a simple gripper with soft materials.</li>
+                <li>Currently focused on CAD development and selecting mechatronic components that balance performance and simplicity.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="proj-card reveal">
+            <div class="proj-head"><span>July 2026</span><span class="proj-status">Finished</span></div>
+            <div class="proj-body">
+              <div class="proj-title">Portfolio Website Creation</div>
+              <ul class="proj-list">
+                <li>Designed and developed a personal portfolio website to showcase my projects, skills, and experience in mechanical engineering and robotics.</li>
+                <li>Utilized VS Code, HTML, CSS, and JavaScript to create an interactive and visually appealing user interface.</li>
+                <li>Hosted on GitHub Pages for easy access and version control.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="proj-card reveal">
+            <div class="proj-head"><span>June - July 2026</span><span class="proj-status">Finished</span></div>
+            <div class="proj-body">
+              <div class="proj-title">Autonomous Robotic Car</div>
+              <ul class="proj-list">
+                <li>Achieved autonomous navigation and obstacle avoidance by integrating ultrasonic and IMU sensors on an Arduino-based 4WD platform.</li>
+                <li>Programmed in Arduino/C++ to implement line-following and obstacle-avoidance.</li>
+                <li>Diagnosed and resolved wiring and sensor-mapping issues using a custom-developed circuit schematic.</li>
+              </ul>
+              <a class="proj-link" href="https://youtube.com/shorts/pIYnoebfMcE" target="_blank">View demo →</a>
+            </div>
+          </div>
+
+          <div class="proj-card reveal">
+            <div class="proj-head"><span>May - June 2026</span><span class="proj-status">Finished</span></div>
+            <div class="proj-body">
+              <div class="proj-title">V6 Engine Design & Simulation</div>
+              <ul class="proj-list">
+                <li>Modeled every individual component of a V6 engine and assembled 50+ parts into a complete, functional engine assembly.</li>
+                <li>Created a motion study to animate piston-crankshaft interaction and cylinder firing.</li>
+              </ul>
+              <a class="proj-link" href="https://youtu.be/KuzbYFWoT_c" target="_blank">View simulation →</a>
+            </div>
+          </div>
+
+          <div class="proj-card reveal">
+            <div class="proj-head"><span>September 2025</span><span class="proj-status">Finished</span></div>
+            <div class="proj-body">
+              <div class="proj-title">Drone Structural Analysis</div>
+              <ul class="proj-list">
+                <li>Performed finite element analysis on a quadcopter drone frame using ANSYS Mechanical and SpaceClaim.</li>
+                <li>Modeled realistic loading conditions including thrust, gravity, and aerodynamic drag in to evaluate structural performance.</li>
+                <li>The redesign lowered weight while maintaining an acceptable safety factor and cutting potential material cost.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" data-sheet="05 / 05">
+      <div class="sheet">
+        <div class="sheet-tag mono">SHEET 05 — SKILLS; CONTACT</div>
+        <div class="section-head">
+          <h2 class="section-title">Skills</h2>
+          <span class="section-note">TOOLBOX</span>
+        </div>
+
+        <div class="skill-grid">
+          <article class="skill-card reveal">
+            <h3>Design & modeling</h3>
+            <p>SolidWorks CAD/CAM, SpaceClaim, Discovery, Technical Drawings (GD&T), MoldFlow </p>
+            <div class="skill-tags">
+              <span>SolidWorks</span>
+              <span>GD&T</span>
+              <span>MoldFlow</span>
+            </div>
+          </article>
+
+          <article class="skill-card reveal">
+            <h3>Simulation & Analysis</h3>
+            <p> ANSYS Fluent & Mechanical, Simulink, LabVIEW and SolidWorks Analysis.</p>
+            <div class="skill-tags">
+              <span>ANSYS</span>
+              <span>Simulink</span>
+              <span>LabVIEW</span>
+            </div>
+          </article>
+
+          <article class="skill-card reveal">
+            <h3>Programming</h3>
+            <p>MATLAB, Python, HTML, C++, Arduino, Raspberry Pi, and MS Excel</p>
+            <div class="skill-tags">
+              <span>Python</span>
+              <span>Arduino</span>
+              <span>Raspberry Pi</span>
+              <span>HTML</span>
+              <span>C++</span>
+            </div>
+          </article>
+
+          <article class="skill-card reveal">
+            <h3>Fabrication & testing</h3>
+            <p>3D Printing, Mechanical Testing, Lean Principles, FMEA, Injection Molding</p>
+            <div class="skill-tags">
+              <span>3D Printing</span>
+              <span>Injection Molding</span>
+              <span>LEAN</span>
+            </div>
+          </article>
+        </div>
+
+        <div style="margin-top:90px;" id="contact">
+          <div class="section-head">
+            <h2 class="section-title">Contact</h2>
+            <span class="section-note">OPEN TO ROLES</span>
+          </div>
+
+          <div class="contact-grid">
+            <div>
+              <div class="contact-lead">Let's talk about robotics, design, or manufacturing.</div>
+              <p class="contact-copy">I'm currently looking for new graduate opportunities in a mechanical engineering role including design, robotics, and automation — reach out directly, or connect through the links below.</p>
+            </div>
+            <div class="contact-block">
+              <div class="contact-row"><span>EMAIL  </span><a href="mailto:matthewcromer18@gmail.com">matthewcromer18@gmail.com</a></div>
+              <div class="contact-row"><span>PHONE</span><a href="tel:+16033956085">(603) 395-6085</a></div>
+              <div class="contact-row"><span>LOCATION</span><span>Greater Boston Area</span></div>
+              <div class="contact-row"><span>GITHUB</span><a href="https://github.com/MatthewCromer" target="_blank">github.com/MatthewCromer</a></div>
+              <div class="contact-row"><span>LINKEDIN</span><a href="https://www.linkedin.com/in/matthewcromer18/" target="_blank">linkedin.com/in/matthewcromer18/</a></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span>© 2026 MATTHEW CROMER</span>
+    <span>DWG NO. MC—2027 · REV A · ALL DIMENSIONS IN OWN WORDS</span>
+  </footer>
+
+  <script>
+    const sheetEl = document.getElementById('sheet-indicator');
+    const sections = document.querySelectorAll('section[data-sheet]');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          sheetEl.textContent = 'SHEET ' + entry.target.dataset.sheet;
+        }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    sections.forEach(s => observer.observe(s));
+
+    const revealItems = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealItems.forEach(item => revealObserver.observe(item));
+  </script>
+
+</body>
+</html>
